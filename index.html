@@ -5,6 +5,8 @@
 <title>Cloudspire — The Ten Bells</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#120d0a">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Cloudspire">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png">
 <meta name="description" content="Cloudspire: climb a 300 m mountain spire as a small monk. A 3D jumping puzzle in a single HTML file.">
 <style>
 :root{--gold:#f3c56c;--paper:#f7ecd9;--red:#c0392b;--ink:#17100c}
@@ -138,6 +140,7 @@ body.touch .ov>*{flex-shrink:0}
   <p>Three hundred metres of stone stand between one small monk and the summit shrine. The slope is kind at first. It does not stay kind. Ring each temple bell to mark your place — you have three lives, and when the third is spent the mountain sends you back to its foot. Glowing spirit stones mark harder side routes: catch the koi at the end of one to bank a perk.</p>
   <div class="keys"><span><b>W A S D</b>Move</span><span><b>Space</b>Jump (hold for height)</span><span><b>Mouse</b>Look</span><span><b>V</b>Switch view</span><span><b>G</b>Graphics</span><span><b>Esc</b>Pause</span></div>
   <div class="thelp">Left thumb moves · drag right side to look · hold Jump for height · tap a perk to use it</div>
+  <div class="thelp" id="a2hs" style="display:none;color:var(--gold)"></div>
   <div class="views" style="margin-bottom:10px"><button id="vT" class="on">Third person</button><button id="vF">First person</button></div>
   <div class="views gfx"><span>Graphics</span><button id="qL">Low</button><button id="qH" class="on">High</button><button id="qU">Ultra</button></div>
   <button id="bStart">Begin the ascent</button>
@@ -1472,7 +1475,9 @@ function resetGame() { G.lives = 3; G.cp = -1; G.runTime = 0; G.falls = 0; G.bes
   const pk0 = parseInt(Q.get('perks') || '0'); for (const k in perks) perks[k] = pk0; for (const f of fishes) { f.taken = false; f.g.visible = true; }
   syncHud(); respawn(); }
 function lockPointer() { if (!TOUCH && !SHOT && !BOT && canvas.requestPointerLock) { try { const p = canvas.requestPointerLock(); if (p && p.catch) p.catch(() => { }); } catch (e) { } } }
-function startGame() { audioInit(); if (G.state !== 'paused') resetGame(); G.state = 'play'; show(null); $('hud').classList.add('on'); $('fade').style.opacity = 0; lockPointer(); setTimeout(() => $('hint').style.opacity = 0, 14000); }
+const STANDALONE = matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches || navigator.standalone === true;
+function goFull() { if (!TOUCH || STANDALONE || SHOT || BOT || document.fullscreenElement) return; const d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen; if (f) { try { const p = f.call(d, { navigationUI: 'hide' }); if (p && p.catch) p.catch(() => { }); } catch (e) { } } }
+function startGame() { audioInit(); goFull(); if (G.state !== 'paused') resetGame(); G.state = 'play'; show(null); $('hud').classList.add('on'); $('fade').style.opacity = 0; lockPointer(); setTimeout(() => $('hint').style.opacity = 0, 14000); }
 function reachCheckpoint(n) {
   G.cp = n; const t = temples[n]; setLit(n); t.swing = 1; syncHud();
   bellSound(196 * Math.pow(2, [0, 2, 4, 7, 9, 12, 14, 16, 19, 21][n] / 12) / 2, 0.6); bellSound(98, 0.3, 0.02);
@@ -1799,6 +1804,8 @@ function updateWorld(dt) {
 { let st = ''; try { st = localStorage.getItem('cloudspire.fp'); } catch (e) { } setView(Q.has('fp') ? Q.get('fp') !== '0' : !!st && !Q.has('shot') && !BOT, true); }
 if (Q.has('qo')) for (const kv of Q.get('qo').split(',')) { const [k, v] = kv.split(':'); for (const o of QUAL) o[k] = parseFloat(v); }
 if (TOUCH) setTouch();
+if (TOUCH && !STANDALONE) { const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform)); const el = $('a2hs'); el.textContent = ios ? 'For full screen: Share → Add to Home Screen' : 'For full screen: browser menu → Install app'; el.style.display = 'block'; }
+if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => { });
 { let q = TOUCH ? '0' : '1'; try { q = localStorage.getItem('cloudspire.q') || q; } catch (e) { } setQuality(Q.has('q') ? parseInt(Q.get('q')) : parseInt(q), true); }
 respawn(); syncHud(); $('loading').remove();
 if (Q.has('y') || SHOT) {

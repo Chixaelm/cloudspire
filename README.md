@@ -19,4 +19,6 @@ Climb a 300 m mountain spire as a small monk. The slope is kind at first, then l
 
 Graphics has Low, High and Ultra settings. Phones start on Low.
 
-Everything is in `index.html`; three.js loads from a CDN.
+On a phone it installs as a full-screen app: in Safari use Share → Add to Home Screen, in Chrome use the menu → Install app. Once loaded it also works offline.
+
+The game is all in `index.html`; three.js loads from a CDN.
