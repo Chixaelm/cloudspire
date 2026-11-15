@@ -1805,7 +1805,9 @@ function updateWorld(dt) {
 if (Q.has('qo')) for (const kv of Q.get('qo').split(',')) { const [k, v] = kv.split(':'); for (const o of QUAL) o[k] = parseFloat(v); }
 if (TOUCH) setTouch();
 if (TOUCH && !STANDALONE) { const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform)); const el = $('a2hs'); el.textContent = ios ? 'For full screen: Share → Add to Home Screen' : 'For full screen: browser menu → Install app'; el.style.display = 'block'; }
-if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => { });
+if ('serviceWorker' in navigator && location.protocol === 'https:') { navigator.serviceWorker.register('sw.js').catch(() => { });
+  // first visit: the three.js modules loaded before the worker took control, so store them for offline play now
+  caches.open('cloudspire-v1').then(c => { for (const e of performance.getEntriesByType('resource')) if (e.name.includes('cdn.jsdelivr.net')) c.match(e.name).then(m => m || c.add(e.name)).catch(() => { }); }).catch(() => { }); }
 { let q = TOUCH ? '0' : '1'; try { q = localStorage.getItem('cloudspire.q') || q; } catch (e) { } setQuality(Q.has('q') ? parseInt(Q.get('q')) : parseInt(q), true); }
 respawn(); syncHud(); $('loading').remove();
 if (Q.has('y') || SHOT) {
