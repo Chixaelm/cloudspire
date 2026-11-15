@@ -3,7 +3,7 @@
 const C = 'cloudspire-v2', T3 = 'https://cdn.jsdelivr.net/npm/three@0.160.0/';
 const CDN = ['build/three.module.js', ...['postprocessing/EffectComposer.js', 'postprocessing/RenderPass.js', 'postprocessing/Pass.js', 'postprocessing/ShaderPass.js', 'postprocessing/MaskPass.js',
   'postprocessing/UnrealBloomPass.js', 'postprocessing/OutputPass.js', 'shaders/CopyShader.js', 'shaders/LuminosityHighPassShader.js', 'shaders/OutputShader.js', 'utils/BufferGeometryUtils.js'].map(f => 'examples/jsm/' + f)].map(f => T3 + f);
-const OWN = ['./', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-180.png'];
+const OWN = ['./', 'edge.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-180.png'];
 self.addEventListener('install', e => { self.skipWaiting();
   e.waitUntil(caches.open(C).then(c => Promise.all([...OWN, ...CDN].map(u => c.match(u).then(m => m || c.add(u)).catch(() => { }))))); });
 self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())));
