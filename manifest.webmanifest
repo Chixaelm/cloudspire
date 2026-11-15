@@ -1,7 +1,9 @@
 {
+  "id": "./",
   "name": "Cloudspire — The Ten Bells",
   "short_name": "Cloudspire",
   "description": "Climb a 300 m mountain spire as a small monk. A 3D jumping puzzle.",
+  "categories": ["games"],
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
@@ -10,7 +12,9 @@
   "background_color": "#120d0a",
   "theme_color": "#120d0a",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

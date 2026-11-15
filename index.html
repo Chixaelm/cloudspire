@@ -11,7 +11,7 @@
 <style>
 :root{--gold:#f3c56c;--paper:#f7ecd9;--red:#c0392b;--ink:#17100c}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;overflow:hidden;background:#120d0a;color:var(--paper);
+html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;background:#120d0a;color:var(--paper);
   font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;user-select:none;-webkit-user-select:none}
 canvas{display:block;position:fixed;inset:0}
 #hud{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity .8s;text-shadow:0 1px 8px rgba(20,8,0,.65)}
@@ -50,8 +50,15 @@ canvas{display:block;position:fixed;inset:0}
 .keys b{display:inline-block;border:1px solid rgba(255,235,200,.55);border-radius:5px;padding:3px 8px;margin-right:6px;font-weight:400;color:var(--gold)}
 button{pointer-events:auto;font:inherit;font-size:17px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink);background:var(--gold);
   border:0;border-radius:2px;padding:15px 34px 15px 38px;cursor:pointer;box-shadow:0 6px 30px rgba(0,0,0,.45);transition:transform .15s,background .15s}
-button:hover{transform:translateY(-2px);background:#ffd98a}
-.stats{display:flex;gap:44px;margin:8px 0 30px}
+button{touch-action:manipulation}
+@media (hover:hover){button:hover{transform:translateY(-2px);background:#ffd98a}}
+button.ghost{background:transparent;color:var(--paper);box-shadow:none;border:1px solid rgba(243,197,108,.6);margin-top:12px;font-size:12px;letter-spacing:.24em;padding:10px 22px 10px 25px}
+#lives span{font-size:32px;line-height:34px;color:var(--gold)}
+#mnote{font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin:0 0 18px;min-height:1.2em}
+#wind{position:absolute;left:50%;top:92px;transform:translateX(-50%);font-size:13px;letter-spacing:.3em;text-transform:uppercase;padding:5px 14px 5px 17px;border:1px solid rgba(255,255,255,.55);border-radius:20px;background:rgba(20,10,5,.4);opacity:0;transition:opacity .3s}
+#wind.warn{opacity:1;animation:wb .32s infinite alternate}#wind.on{opacity:1;background:rgba(200,230,255,.85);color:var(--ink);text-shadow:none}
+@keyframes wb{to{opacity:.35}}
+.stats{display:flex;gap:44px;margin:8px 0 30px;flex-wrap:wrap;justify-content:center}
 .stats div{font-size:13px;letter-spacing:.2em;text-transform:uppercase;opacity:.9}
 .stats b{display:block;font-size:38px;font-weight:400;letter-spacing:.02em;color:var(--gold)}
 #koi{font-size:15px;letter-spacing:.16em;text-transform:uppercase;margin-top:4px;opacity:.9}
@@ -66,7 +73,7 @@ button:hover{transform:translateY(-2px);background:#ffd98a}
 #xhair{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:rgba(255,255,255,.75);box-shadow:0 0 0 1.5px rgba(0,0,0,.35);display:none}
 .views{display:flex;gap:0;margin-bottom:22px;border:1px solid rgba(243,197,108,.6);border-radius:3px;overflow:hidden}
 .views button{background:transparent;color:var(--paper);box-shadow:none;font-size:12px;letter-spacing:.22em;padding:9px 18px;border-radius:0}
-.views button:hover{transform:none;background:rgba(243,197,108,.18)}
+@media (hover:hover){.views button:hover{transform:none;background:rgba(243,197,108,.18)}}
 .views span{font-size:11px;letter-spacing:.22em;text-transform:uppercase;padding:9px 14px;opacity:.7;align-self:center}
 .views button.on{background:var(--gold);color:var(--ink)}
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#120d0a;font-size:15px;letter-spacing:.4em;text-transform:uppercase;z-index:9}
@@ -82,9 +89,10 @@ body.touch #tl{left:calc(54px + env(safe-area-inset-left));top:calc(12px + env(s
 body.touch #alt{font-size:32px}body.touch #alt i{font-size:14px}
 body.touch #place{font-size:10px;margin-top:3px;max-width:42vw}
 body.touch #tr{right:calc(14px + env(safe-area-inset-right));top:calc(12px + env(safe-area-inset-top))}
-body.touch #lives svg{width:24px;height:24px}body.touch #lives{gap:5px}
+body.touch #lives svg{width:24px;height:24px}body.touch #lives{gap:5px}body.touch #lives span{font-size:22px;line-height:24px}
+body.touch #wind{top:calc(58px + env(safe-area-inset-top));font-size:10px;padding:4px 10px 4px 13px}body.touch #mnote{font-size:10px;margin-bottom:12px}
 body.touch #bells,body.touch #koi{font-size:10px;margin-top:3px}body.touch #bells b,body.touch #koi b{font-size:13px}
-body.touch #meter{left:calc(18px + env(safe-area-inset-left));top:34px;bottom:auto;height:min(46vh,300px)}
+body.touch #meter{left:calc(18px + env(safe-area-inset-left));top:calc(34px + env(safe-area-inset-top));bottom:auto;height:min(46vh,300px)}
 body.touch #perks{right:calc(14px + env(safe-area-inset-right));top:calc(84px + env(safe-area-inset-top));bottom:auto;display:grid;grid-template-columns:50px 50px;gap:6px}
 body.touch .pk{width:50px;height:46px;padding:6px 2px 2px;pointer-events:auto}
 body.touch .pk.zero{opacity:.22}
@@ -99,7 +107,7 @@ body.touch .ov p{font-size:13px;line-height:1.4;margin-bottom:12px;max-width:520
 body.touch .views{margin-bottom:10px}body.touch .views button{padding:8px 12px;font-size:11px;letter-spacing:.14em}
 body.touch .views span{padding:8px 8px;letter-spacing:.12em}
 body.touch button{font-size:14px;padding:12px 22px 12px 26px}
-body.touch .stats{gap:26px;margin:4px 0 18px}body.touch .stats b{font-size:26px}body.touch .stats div{font-size:10px}
+body.touch .stats{gap:18px 26px;margin:4px 0 18px}body.touch .stats b{font-size:26px}body.touch .stats div{font-size:10px}
 body.touch .ov>*{flex-shrink:0}
 @media (max-height:480px){body.touch .ov p{display:none}body.touch .ov h1{font-size:40px}body.touch .ov h2{font-size:26px}body.touch .thelp{margin-bottom:10px}}
 #bJump{position:absolute;right:calc(22px + env(safe-area-inset-right));bottom:calc(26px + env(safe-area-inset-bottom));width:92px;height:92px;border-radius:50%;pointer-events:auto;
@@ -124,33 +132,38 @@ body.touch .ov>*{flex-shrink:0}
   <div id="tr"><div id="lives"></div><div id="bells">Bells <b id="belln">0</b> / 10</div><div id="koi">Koi <b id="koin">0</b> / <span id="koit">0</span></div></div>
   <div id="perks">
     <div class="pk zero" id="pk-slow" style="--c:#8fd8ff"><i>☂</i><b>0</b><span>Slow fall</span><kbd>Shift</kbd></div>
-    <div class="pk zero" id="pk-jump" style="--c:#6fe08a"><i>⇈</i><b>0</b><span>Double jump</span><kbd>Space in air</kbd></div>
+    <div class="pk zero" id="pk-jump" style="--c:#6fe08a"><i>⇈</i><b>0</b><span>2× Jump</span><kbd>Space in air</kbd></div>
     <div class="pk zero" id="pk-undo" style="--c:#b58cff"><i>↺</i><b>0</b><span>Undo</span><kbd>Z</kbd></div>
     <div class="pk zero" id="pk-life" style="--c:#ffc23e"><i>❀</i><b>0</b><span>Extra life</span><kbd>X</kbd></div>
   </div>
   <div id="toast"><div id="t1"></div><div id="t2"></div></div>
   <div id="hint">WASD move · Space jump · Mouse look · V first / third person · G graphics · M mute</div>
+  <div id="wind">≋ Wind</div>
   <div id="xhair"></div>
   <div id="tc"><div id="stick"><i></i></div><div id="bJump">Jump</div><div id="tbar"><div id="bPause">❚❚</div><div id="bView">◉</div><div id="bMute">♪</div></div></div>
 </div>
 <div id="fade"></div>
 <div class="ov on" id="title">
   <h1>CLOUDSPIRE</h1>
-  <div class="sub">The Ten Bells</div>
-  <p>Three hundred metres of stone stand between one small monk and the summit shrine. The slope is kind at first. It does not stay kind. Ring each temple bell to mark your place — you have three lives, and when the third is spent the mountain sends you back to its foot. Glowing spirit stones mark harder side routes: catch the koi at the end of one to bank a perk.</p>
+  <div class="sub" id="tsub">The Ten Bells</div>
+  <p>Three hundred metres of stone stand between one small monk and the summit shrine. The slope is kind at first. It does not stay kind. Ring each temple bell to mark your place — you have three lives, and when the third is spent the mountain sends you back to its foot. Glowing spirit stones mark harder side routes: catch the koi at the end of one to bank a perk. Higher up, turning beams, blue ice and a gusting wind ask for patience.</p>
   <div class="keys"><span><b>W A S D</b>Move</span><span><b>Space</b>Jump (hold for height)</span><span><b>Mouse</b>Look</span><span><b>V</b>Switch view</span><span><b>G</b>Graphics</span><span><b>Esc</b>Pause</span></div>
   <div class="thelp">Left thumb moves · drag right side to look · hold Jump for height · tap a perk to use it</div>
   <div class="thelp" id="a2hs" style="display:none;color:var(--gold)"></div>
   <div class="views" style="margin-bottom:10px"><button id="vT" class="on">Third person</button><button id="vF">First person</button></div>
   <div class="views gfx"><span>Graphics</span><button id="qL">Low</button><button id="qH" class="on">High</button><button id="qU">Ultra</button></div>
+  <div class="views" style="margin-bottom:10px"><span>Path</span><button id="d0">Pilgrim</button><button id="d1">Monk</button><button id="d2">Ascetic</button></div>
+  <div class="views" style="margin-bottom:10px"><span>Peak</span><button id="m0">Cloudspire</button><button id="m1">Windward</button><button id="m2">Frozen</button></div>
+  <div id="mnote"></div>
   <button id="bStart">Begin the ascent</button>
+  <button id="bNew" class="ghost" style="display:none">Start a new ascent</button>
 </div>
-<div class="ov" id="pause"><h2>A moment of stillness</h2><div class="sub">Paused</div><button id="bResume">Continue</button></div>
-<div class="ov" id="over"><h2>The mountain keeps its silence</h2><div class="sub">All three lives are spent</div>
+<div class="ov" id="pause"><h2>A moment of stillness</h2><div class="sub">Paused</div><button id="bResume">Continue</button><button id="bQuit" class="ghost">Save and leave</button></div>
+<div class="ov" id="over"><h2>The mountain keeps its silence</h2><div class="sub" id="oSub">All three lives are spent</div>
   <div class="stats"><div><b id="oAlt">0 m</b>Highest point</div><div><b id="oBell">0</b>Bells rung</div></div>
   <button id="bAgain">Begin again</button></div>
 <div class="ov" id="win"><h2>Above the ten thousand clouds</h2><div class="sub">The summit is yours</div>
-  <div class="stats"><div><b id="wTime">0:00</b>Time</div><div><b id="wLives">3</b>Lives left</div><div><b id="wFalls">0</b>Falls</div></div>
+  <div class="stats"><div><b id="wTime">0:00</b>Time</div><div><b id="wLives">3</b>Lives left</div><div><b id="wFalls">0</b>Falls</div><div><b id="wBest">–</b>Best</div></div>
   <button id="bWin">Climb again</button></div>
 <script type="module">
 import * as THREE from 'three';
@@ -171,7 +184,15 @@ const clamp = (x, a, b) => x < a ? a : x > b ? b : x;
 const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 const damp = (a, b, k, dt) => lerp(a, b, 1 - Math.exp(-k * dt));
 function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-const _cr = mulberry(20261113), _vr = mulberry(777);
+// three mountains share the rock but not the route: each has its own layout and temperament
+const MOUNTAINS = [
+  { name: 'Cloudspire', sub: 'The Ten Bells', seed: 20261113, ice: 170, iceP: 0.4, wind: 205, windV: 1.5, spin: 1, phase: 1 },
+  { name: 'Windward Tooth', sub: 'Where the gale lives', seed: 90210077, ice: 215, iceP: 0.3, wind: 95, windV: 1.9, spin: 1.8, phase: 0.6 },
+  { name: 'Frozen Needle', sub: 'Ice from the first bell', seed: 31415926, ice: 70, iceP: 0.6, wind: 240, windV: 1.4, spin: 0.7, phase: 1.8 },
+];
+const store = { get(k) { try { return localStorage.getItem('cloudspire.' + k); } catch (e) { return null; } }, set(k, v) { try { if (v === null) localStorage.removeItem('cloudspire.' + k); else localStorage.setItem('cloudspire.' + k, v); } catch (e) { } } };
+const MN = clamp(parseInt(Q.get('m') ?? store.get('m') ?? '0') || 0, 0, MOUNTAINS.length - 1), MT = MOUNTAINS[MN];
+const _cr = mulberry(Q.has('seed') ? parseInt(Q.get('seed')) : MT.seed), _vr = mulberry(777);
 const cr = (a, b) => a + (b - a) * _cr();          // course rng (layout)
 const vr = () => _vr(), vrr = (a, b) => a + (b - a) * _vr(); // visual rng
 
@@ -280,7 +301,7 @@ const QUAL = [
   { name: 'High', pr: 1.5, aa: 4, ao: 10, rays: 24, cl: 22, cs: 0.5, near: 4096, far: 2048, par: 1 },
   { name: 'Ultra', pr: 1.75, aa: 2, ao: 16, rays: 48, cl: 40, cs: 0.75, near: 4096, far: 4096, par: 1 },
 ];
-let QN = 1, QQ = QUAL[1];
+let QN = 1, QQ = QUAL[1], RS = 1;   // RS: resolution scale, lowered on devices that cannot keep up
 const PAR = { value: 1 };
 const noise3 = (() => {
   const S = 64, d = new Uint8Array(S * S * S), rnd = mulberry(99), octs = [4, 8, 16, 32].map(n => { const a = new Float32Array(n * n * n); for (let i = 0; i < a.length; i++) a[i] = rnd(); return { n, a }; });
@@ -405,7 +426,7 @@ function renderFrame() {
   renderer.setRenderTarget(null); composer.render();
 }
 function setQuality(n, silent) {
-  QN = clamp(n | 0, 0, 2); QQ = QUAL[QN]; PRATIO = Math.min(devicePixelRatio || 1, QQ.pr); PAR.value = QQ.par;
+  QN = clamp(n | 0, 0, 2); QQ = QUAL[QN]; RS = 1; PRATIO = Math.min(devicePixelRatio || 1, QQ.pr); PAR.value = QQ.par;
   const sz = (l, s) => { if (l.shadow.mapSize.x !== s) { l.shadow.mapSize.set(s, s); if (l.shadow.map) { l.shadow.map.dispose(); l.shadow.map = null; } } };
   if (rtScene.samples !== QQ.aa) { rtScene.samples = QQ.aa; rtScene.dispose(); }
   sz(sun, QQ.near); sunFar.castShadow = !!QQ.far; if (QQ.far) { sz(sunFar, QQ.far); sunFar.shadow.needsUpdate = true; }
@@ -769,7 +790,7 @@ const plats = [], route = [], dyn = [], temples = [], flagData = [];
 const SUMMIT = { kind: 'summit', y: H, wx: 0, wz: 0 };
 function addPlat(o, onRoute = true) {
   o.cos = Math.cos(o.th); o.sin = Math.sin(o.th); o.cx = o.rho * o.cos; o.cz = o.rho * o.sin; o.dx = o.dy = o.dz = 0;
-  if (o.h === undefined) o.h = 0.5; plats.push(o); if (onRoute) route.push(o); return o;
+  if (o.h === undefined) o.h = 0.5; o.rd = o.kind === 'spin' ? o.hw : o.hd; plats.push(o); if (onRoute) route.push(o); return o;
 }
 const l2w = (pl, lx, lz) => ({ x: pl.cx + lx * pl.sin + lz * pl.cos, z: pl.cz - lx * pl.cos + lz * pl.sin });
 const lw = (pl, lx, yy) => visR(pl.th - lx / pl.rho, Math.min(yy, H)) - pl.rho;   // local z of the visible rock
@@ -784,6 +805,7 @@ function flagLine(a, b, sag = 1.2) {
   }
 }
 M.cloth = Std({ vertexColors: true, roughness: 1 });
+M.ice = Std({ vertexColors: true, roughness: 0.1, metalness: 0.05, emissive: 0x16304a, emissiveIntensity: 0.5 });
 const tufts = [];   // grass tuft positions gathered while building, instanced later
 function lantern(bag, F, x, y, z) {
   P(bag, 'plaster', box(0.36, 0.14, 0.36), F, x, y + 0.07, z, C.pale); P(bag, 'plaster', cyl(0.07, 0.1, 0.7, 8), F, x, y + 0.49, z, C.pale);
@@ -898,6 +920,24 @@ function buildLift(pl) {
   for (const sx of [-1, 1]) { const x = sx * (pl.hw - 0.1); beam(W, 'wood', F, [x, ty, pl.hd + 0.3], [x, ty, lw(pl, x, pl.y1 + ty) - 0.45], 0.18, C.woodDark); }
   for (const sz of [-1, 1]) beam(W, 'wood', F, [-pl.hw - 0.2, ty + 0.16, sz * (pl.hd - 0.1)], [pl.hw + 0.2, ty + 0.16, sz * (pl.hd - 0.1)], 0.14, C.wood);
 }
+function buildSpin(pl) {     // a turning beam on a post: step on and off when it points your way
+  const bag = new Bag(), { hw, hd } = pl, n = Math.round(2 * hw / 0.34), pw = 2 * hw / n;
+  P(bag, 'lacquer', box(2 * hw - 0.04, 0.24, 2 * hd - 0.12), null, 0, -0.2, 0, C.red);
+  for (let k = 0; k < n; k++) P(bag, 'wood', plank(2 * hd, 0.08, pw - 0.025).rotateY(Math.PI / 2), null, -hw + pw * (k + 0.5), -0.04, 0, woodTone());
+  for (const sx of [-1, 1]) P(bag, 'gold', box(0.1, 0.36, 2 * hd + 0.06), null, sx * hw, -0.17, 0, C.gold);
+  P(bag, 'gold', cyl(0.34, 0.4, 0.1, 16), null, 0, -0.37, 0, C.gold);
+  dynGroup(bag, pl);
+  const F = frame(pl.th, pl.rho, pl.y), zw = lw(pl, 0, pl.y - 1.8) - 0.45;
+  P(W, 'wood', grainY(cyl(0.13, 0.16, 1.5, 10), 1.5, 1), F, 0, -1.17, 0, C.woodDark); P(W, 'iron', cyl(0.22, 0.22, 0.08, 12), F, 0, -0.45, 0, C.iron);
+  beam(W, 'wood', F, [0, -1.8, 0.1], [0, -1.8, zw], 0.2, C.woodDark); beam(W, 'wood', F, [0, -0.8, -0.05], [0, -1.8, Math.max(zw, -1.4)], 0.12, C.woodDark);
+}
+function buildIce(pl) {      // a shelf of blue ice: footing slides
+  const F = frame(pl.th, pl.rho, pl.y), { hw, hd } = pl, over = slopeAt(pl.y) >= 0.12; pl.h = 0.55;
+  const ext = over ? 0 : clamp(-hd - Math.min(lw(pl, -hw, pl.y - 0.2), lw(pl, 0, pl.y - 0.2), lw(pl, hw, pl.y - 0.2)) + 0.6, 0.3, 5.2);
+  P(W, 'ice', ledgeGeo(hw, hd, ext, 0.75), F, 0, 0, 0, [0.6, 0.8, 0.98]);
+  for (let i = 0; i < 10; i++) { const a = vr() * Math.PI, L = vrr(0.35, 1.1); P(W, 'ice', new THREE.ConeGeometry(vrr(0.05, 0.11), L, 5), F, Math.cos(a) * hw * 0.98, -0.45 - L / 2, Math.sin(a) * hd * 0.98, [0.78, 0.9, 1.0], Math.PI); }
+  if (over) { for (const sx of [-1, 1]) P(W, 'iron', box(0.1, 0.06, 2 * hd + 0.5), F, sx * hw * 0.7, 0.02, 0, C.iron); chains(pl, F); }
+}
 function buildDrum(pl) {
   const F = frame(pl.th, pl.rho, pl.y), r = 1.15;
   P(W, 'lacquer', new THREE.LatheGeometry([[r * 0.86, -0.9], [r * 0.97, -0.68], [r, -0.45], [r * 0.97, -0.22], [r * 0.86, 0]].map(p => new THREE.Vector2(p[0], p[1])), 28), F, 0, 0, 0, C.red);
@@ -1005,6 +1045,7 @@ function buildSummit(thEnd) {
     beam(W, 'wood', null, [px, H - 0.2, pz], [px, H + 3.4, pz], 0.07, C.woodDark, true); flagLine(top, new THREE.Vector3(px, H + 3.4, pz), 1.8);
   }
 }
+const PHASE_T = 2.9, PHASE_ON = 1.75;
 function generate() {
   let th = 0, y = 2;
   let prev = addPlat({ kind: 'start', th, y, hw: 7, hd: 4.2, h: 1.2, rho: maxWall(th, y, 7, 5, -0.5) + 0.3 + 4.2 });
@@ -1026,26 +1067,32 @@ function generate() {
     let kind = 'static';
     const nearT = prev.kind === 'temple' ? prev.y : nextCp - y < 3.4 ? nextCp : 0;
     if (!boost && !nearT && route.length - lastSp >= 2 && y < nextCp - 7 && y < 286 && y > 7) {
-      const r = cr(0, 1), pm = t > 0.12 ? lerp(0.07, 0.2, t) : 0, pe = t > 0.1 ? 0.05 : 0, pd = t > 0.06 ? 0.07 : 0, pc = t > 0.28 ? lerp(0.03, 0.26, (t - 0.28) / 0.72) : 0;
-      kind = r < pm ? 'mover' : r < pm + pe ? 'lift' : r < pm + pe + pd ? 'drum' : r < pm + pe + pd + pc ? 'crumble' : 'static';
+      const r = cr(0, 1), pm = t > 0.12 ? lerp(0.07, 0.2, t) : 0, pe = t > 0.1 ? 0.05 : 0, pd = t > 0.06 ? 0.07 : 0, pc = t > 0.28 ? lerp(0.03, 0.26, (t - 0.28) / 0.72) : 0,
+        ps = t > 0.16 ? 0.09 * MT.spin : 0, pp = t > 0.36 ? lerp(0.04, 0.09, (t - 0.36) / 0.64) * MT.phase : 0;
+      kind = r < pm ? 'mover' : r < pm + pe ? 'lift' : r < pm + pe + pd ? 'drum' : r < pm + pe + pd + pc ? 'crumble' : r < pm + pe + pd + pc + ps ? 'spin' : r < pm + pe + pd + pc + ps + pp ? 'phase' : 'static';
     }
     let hw = lerp(1.9, 0.65, t) * cr(0.85, 1.2), hd = lerp(1.5, 0.62, t) * cr(0.9, 1.15), f = lerp(0.3, 0.86, t) * cr(0.82, 1);
     if (boost) { hw *= 1.35; hd *= 1.3; }
     if (kind === 'static' && !boost && t > 0.04 && cr(0, 1) < 0.16) { rise = cr(-0.25, 0.25); f = Math.min(0.9, f * 1.12); }
+    const ice = kind === 'static' && !boost && y > MT.ice && cr(0, 1) < MT.iceP;
+    if (ice) { hw = Math.max(hw * 1.25, 1.0); hd = Math.max(hd * 1.25, 0.9); f *= 0.92; }
     let gapK = boost ? 0.3 : f, Hh = 0;
     if (kind === 'drum') { hw = hd = 0.95; gapK *= 0.8; }
     else if (kind === 'crumble') { hw = Math.max(hw, 0.85); hd = Math.max(hd, 0.75); gapK *= 0.92; }
     else if (kind === 'mover') { hw = lerp(1.5, 0.95, t); hd = lerp(1.2, 0.8, t); gapK *= 0.7; }
     else if (kind === 'lift') { hw = lerp(1.5, 1.0, t); hd = lerp(1.3, 0.9, t); gapK *= 0.7; rise = Math.min(rise, 0.8); Hh = cr(3, 5); }
+    else if (kind === 'spin') { hw = lerp(1.9, 1.5, t); hd = 0.5; gapK *= 0.8; rise = Math.min(rise, 1.0); }
+    else if (kind === 'phase') { hw = hd = lerp(0.85, 0.64, t); gapK *= 0.85; }
     let gap = Math.max(0.55, prev.minGap || 0, RUN * airT(Math.max(rise, 0), boost ? BOUNCE : JUMP_V) * gapK);
     y += rise;
     const up = Hh + 4;
     let th2 = th + DIR * (prev.hw + gap + hw) / prev.rho;
-    let rmin = maxWall(th2, y, hw, up) + 0.2 + hd; if (nearT) rmin = Math.max(rmin, maxWall(th2, nearT, hw + 1, 8, -0.6) + 0.35 + 1.3 + hd);
+    const rd = kind === 'spin' ? hw : hd;
+    let rmin = maxWall(th2, y, hw, up) + 0.2 + rd; if (nearT) rmin = Math.max(rmin, maxWall(th2, nearT, hw + 1, 8, -0.6) + 0.35 + 1.3 + rd);
     const lim = 0.7 * (prev.hd + hd);
     let rho = Math.max(rmin, clamp(rmin + cr(0, lerp(0.15, 0.8, t)), prev.rho - lim, prev.rho + lim));
     const dr = Math.abs(rho - prev.rho) - (prev.hd + hd) * 0.85;
-    if (dr > 0) { gap = Math.sqrt(Math.max(0.09, gap * gap - dr * dr)); th2 = th + DIR * (prev.hw + gap + hw) / prev.rho; rho = Math.max(rho, rmin, maxWall(th2, y, hw, up) + 0.2 + hd); }
+    if (dr > 0) { gap = Math.sqrt(Math.max(0.09, gap * gap - dr * dr)); th2 = th + DIR * (prev.hw + gap + hw) / prev.rho; rho = Math.max(rho, rmin, maxWall(th2, y, hw, up) + 0.2 + rd); }
     let pl;
     if (kind === 'mover') {
       const travel = cr(4, 7) * lerp(1, 1.2, t), thB = th2 + DIR * travel / prev.rho, vmax = lerp(2.0, 3.0, t);
@@ -1056,7 +1103,9 @@ function generate() {
       pl = addPlat({ kind, th: th2, rho, y, y0: y, y1: y + Hh, hw, hd, h: 0.3, dyn: true, om: 2 * vmax / Hh, ph: cr(0, TAU), minGap: 0.9 }); th = th2; y = pl.y1; buildLift(pl);
     } else if (kind === 'drum') { pl = addPlat({ kind, th: th2, rho, y, hw, hd, h: 0.9 }); th = th2; buildDrum(pl); }
     else if (kind === 'crumble') { pl = addPlat({ kind, th: th2, rho, y, y0: y, hw, hd, h: 0.45, dyn: true, trig: -1, delay: lerp(0.85, 0.45, t), ft: 0, vy: 0 }); th = th2; buildCrumble(pl); }
-    else { pl = addPlat({ kind, th: th2, rho, y, hw, hd }); th = th2; buildStatic(pl); }
+    else if (kind === 'spin') { pl = addPlat({ kind, th: th2, rho, y, hw, hd, h: 0.34, dyn: true, om: (cr(0, 1) < 0.5 ? -1 : 1) * lerp(0.75, 0.95, t), ph: cr(0, TAU), minGap: 0.7 }); pl.pcos = pl.cos; pl.psin = pl.sin; th = th2; buildSpin(pl); }
+    else if (kind === 'phase') { pl = addPlat({ kind, th: th2, rho, y, hw, hd, h: 0.2, dyn: true, ph: cr(0, PHASE_T) }); th = th2; buildBranchPlat(pl, new THREE.Color(0xf2a6c4)); }
+    else { pl = addPlat({ kind, th: th2, rho, y, hw, hd, ice }); th = th2; if (ice) buildIce(pl); else buildStatic(pl); }
     boost = kind === 'drum'; if (kind !== 'static') lastSp = route.length; prev = pl;
   }
   buildSummit(th);
@@ -1064,7 +1113,7 @@ function generate() {
 generate();
 
 // ───────────────────────── optional hard routes and the spirit koi that reward them
-const _br = mulberry(4242), br = (a, b) => a + (b - a) * _br();
+const _br = mulberry(4242 + MN * 97), br = (a, b) => a + (b - a) * _br();
 const PERKS = {
   slow: { name: 'Slow Fall', fish: 'Cloud Koi', col: 0x8fd8ff },
   jump: { name: 'Double Jump', fish: 'Jade Koi', col: 0x6fe08a },
@@ -1072,7 +1121,6 @@ const PERKS = {
   life: { name: 'Extra Life', fish: 'Golden Koi', col: 0xffc23e },
 };
 const PERK_ORDER = ['jump', 'slow', 'undo', 'jump', 'slow', 'life', 'undo', 'jump', 'life', 'slow', 'undo', 'jump', 'slow', 'life', 'undo', 'jump', 'slow', 'life'];
-const PHASE_T = 2.9, PHASE_ON = 1.75;
 const fishes = [], branches = [];
 const glowTex = canvasTex(64, (g, S) => { const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.3, 'rgba(255,255,255,.35)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, S, S); }, true);
 function makeFish(perk, seed) {
@@ -1125,14 +1173,14 @@ function buildBranchPlat(pl, col) {
   }
 }
 function tryBranch(i, perk) {
-  const A = route[i]; if (!A || A.kind !== 'static') return false;
+  const A = route[i]; if (!A || A.kind !== 'static' || A.ice) return false;
   const t = clamp(A.y / H, 0, 1), n0 = (t < 0.15 ? br(5, 6.99) : br(6, 9.99)) | 0, list = [];
   const near = (q, th, pad) => Math.abs(q.th - th) * q.rho < q.hw + pad || (q.thB !== undefined && (q.thA - th) * (q.thB - th) <= 0);
   const mainTop = th => { let m = -1e9; for (let k = i; k < Math.min(route.length, i + 40); k++) { const q = route[k]; if (near(q, th, 2.6)) m = Math.max(m, q.y1 !== undefined ? q.y1 : q.y); } return m; };
-  const rhoMin = (th, y, hb, out) => { let m = maxWall(th, y, hb, 4) + 0.5; for (let k = Math.max(0, i - 2); k < Math.min(route.length, i + 40); k++) { const q = route[k]; if (near(q, th, hb + 1.4) && Math.abs(q.y - y) < 9) m = Math.max(m, q.rho + q.hd + out); } return m + hb; };
+  const rhoMin = (th, y, hb, out) => { let m = maxWall(th, y, hb, 4) + 0.5; for (let k = Math.max(0, i - 2); k < Math.min(route.length, i + 40); k++) { const q = route[k]; if (near(q, th, hb + 1.4) && Math.abs(q.y - y) < 9) m = Math.max(m, q.rho + q.rd + out); } return m + hb; };
   const blocked = (x, z, y, hb) => { for (const pl of plats) {
     const lo = (pl.y0 !== undefined ? pl.y0 : pl.y) - pl.h, hi = (pl.y1 !== undefined ? pl.y1 + 3.6 : pl.y); if (y + 4.6 < lo || y - 5.1 > hi) continue;
-    for (const th of pl.thB !== undefined ? [pl.thA, (pl.thA + pl.thB) / 2, pl.thB] : [pl.th]) { const cx = pl.rho * Math.cos(th), cz = pl.rho * Math.sin(th), s = Math.sin(th), c = Math.cos(th), dx = x - cx, dz = z - cz; if (Math.abs(dx * s - dz * c) < pl.hw + hb + 1.0 && Math.abs(dx * c + dz * s) < pl.hd + hb + 0.5) return true; } }
+    for (const th of pl.thB !== undefined ? [pl.thA, (pl.thA + pl.thB) / 2, pl.thB] : [pl.th]) { const cx = pl.rho * Math.cos(th), cz = pl.rho * Math.sin(th), s = Math.sin(th), c = Math.cos(th), dx = x - cx, dz = z - cz; if (Math.abs(dx * s - dz * c) < pl.hw + hb + 1.0 && Math.abs(dx * c + dz * s) < pl.rd + hb + 0.5) return true; } }
     return false; };
   const rejoin = S => { const sx = S.rho * Math.cos(S.th), sz = S.rho * Math.sin(S.th); let best = 0;
     for (let k = i + 3; k < Math.min(route.length, i + 40); k++) { const q = route[k]; if (!(q.kind === 'static' || q.kind === 'crumble')) continue; const a = DIR * (q.th - S.th) * q.rho, dy = q.y - S.y; if (a < -0.5 || a > 8 || dy > 0.4 || dy < -5) continue; if (Math.hypot(q.cx - sx, q.cz - sz) - S.hw - Math.min(q.hw, q.hd) <= 0.7 * RUN * airT(dy)) best = k; }
@@ -1446,7 +1494,9 @@ function toggleMute() { A.on = !A.on; if (A.master) A.master.gain.value = A.on ?
 
 // ───────────────────────── game state + UI
 const BOT = Q.has('bot'), SHOT = Q.has('shot');
-const G = { state: 'title', lives: 3, cp: -1, time: 0, runTime: 0, falls: 0, dieT: 0, best: 0, fp: false };
+const MODES = [{ name: 'Pilgrim', lives: 0, note: 'Endless lives · a fall returns you to the last bell' }, { name: 'Monk', lives: 3, note: 'Three lives, then back to the foot' }, { name: 'Ascetic', lives: 1, note: 'One life' }];
+let MODE = clamp(parseInt(Q.get('mode') ?? store.get('mode') ?? '1') || 0, 0, 2);
+const G = { state: 'title', mode: MODE, lives: 3, cp: -1, time: 0, runTime: 0, falls: 0, dieT: 0, best: 0, fp: false };
 const PL = { pos: new THREE.Vector3(), vel: new THREE.Vector3(), grounded: false, ground: null, coyote: 0, buffer: 0, jumping: false, lastGroundY: 0 };
 const cam = { yaw: 0.25, pitch: 0.22, dist: 9, cur: 9, target: new THREE.Vector3(), ey: 0 };
 const look = { h: 0, p: 0 };
@@ -1458,7 +1508,7 @@ let toastT = 0;
 function toast(a, b = '', ms = 3200) { $('t1').textContent = a; $('t2').textContent = b; $('toast').classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => $('toast').classList.remove('on'), ms); }
 function show(id) { for (const k of ['title', 'pause', 'over', 'win']) $(k).classList.toggle('on', k === id); }
 function syncHud() {
-  $('lives').innerHTML = LOTUS.repeat(Math.max(3, G.lives)); [...$('lives').children].forEach((s, i) => s.classList.toggle('lost', i >= G.lives));
+  const ML = MODES[G.mode].lives; $('lives').innerHTML = ML ? LOTUS.repeat(Math.max(ML, G.lives)) : LOTUS + '<span>∞</span>'; if (ML) [...$('lives').children].forEach((s, i) => s.classList.toggle('lost', i >= G.lives));
   for (const k in perks) { const el = $('pk-' + k); el.classList.toggle('zero', !perks[k]); el.querySelector('b').textContent = perks[k]; }
   $('koin').textContent = fishes.filter(f => f.taken).length; $('koit').textContent = fishes.length;
   $('belln').textContent = G.cp + 1; [...$('mticks').children].forEach((t, i) => t.classList.toggle('lit', i <= G.cp));
@@ -1471,18 +1521,35 @@ function respawn() {
   monk.yaw = Math.atan2(pl.sin, -pl.cos); look.h = Math.atan2(-pl.cos, pl.sin); look.p = -0.08; cam.ey = pl.y; cam.yaw = 0.25; cam.pitch = 0.22; cam.target.set(w.x, pl.y + 1.25, w.z); cam.cur = cam.dist;
   if (BOT) bot.last = botRoute.indexOf(pl);
 }
-function resetGame() { G.lives = 3; G.cp = -1; G.runTime = 0; G.falls = 0; G.best = 0; setLit(-1);
+function resetGame() { G.mode = MODE; G.lives = MODES[MODE].lives || 3; G.cp = -1; G.runTime = 0; G.falls = 0; G.best = 0; setLit(-1);
   const pk0 = parseInt(Q.get('perks') || '0'); for (const k in perks) perks[k] = pk0; for (const f of fishes) { f.taken = false; f.g.visible = true; }
   syncHud(); respawn(); }
 function lockPointer() { if (!TOUCH && !SHOT && !BOT && canvas.requestPointerLock) { try { const p = canvas.requestPointerLock(); if (p && p.catch) p.catch(() => { }); } catch (e) { } } }
 const STANDALONE = matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches || navigator.standalone === true;
 function goFull() { if (!TOUCH || STANDALONE || SHOT || BOT || document.fullscreenElement) return; const d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen; if (f) { try { const p = f.call(d, { navigationUI: 'hide' }); if (p && p.catch) p.catch(() => { }); } catch (e) { } } }
-function startGame() { audioInit(); goFull(); if (G.state !== 'paused') resetGame(); G.state = 'play'; show(null); $('hud').classList.add('on'); $('fade').style.opacity = 0; lockPointer(); setTimeout(() => $('hint').style.opacity = 0, 14000); }
+// progress is kept per mountain so a phone that drops the app in the background can pick the climb back up at the last bell
+const SAVE_KEY = 'save' + MN, NOSAVE = BOT || SHOT || Q.has('y') || Q.has('walk') || Q.has('pre');
+const fmtT = s => Math.floor(s / 60) + ':' + String(Math.round(s) % 60).padStart(2, '0');
+function saveRun() { if (NOSAVE || !(G.state === 'play' || G.state === 'paused' || G.state === 'dying')) return;
+  store.set(SAVE_KEY, JSON.stringify({ mode: G.mode, cp: G.cp, lives: G.lives, perks, fish: fishes.map(f => f.taken ? 1 : 0).join(''), t: Math.round(G.runTime), falls: G.falls, best: Math.round(G.best) })); }
+function readSave() { if (NOSAVE) return null; try { const s = JSON.parse(store.get(SAVE_KEY)); return s && s.cp >= -1 && s.cp <= 9 && MODES[s.mode] && (s.cp >= 0 || /1/.test(s.fish)) ? s : null; } catch (e) { return null; } }
+function applySave(s) { G.mode = s.mode; G.cp = s.cp; G.lives = clamp(s.lives | 0, 1, 5); G.runTime = +s.t || 0; G.falls = s.falls | 0; G.best = +s.best || 0; for (const k in perks) perks[k] = (s.perks && s.perks[k]) | 0;
+  if (s.fish && s.fish.length === fishes.length) fishes.forEach((f, i) => { f.taken = s.fish[i] === '1'; f.g.visible = !f.taken; }); setLit(G.cp); syncHud(); respawn(); }
+const bests = (() => { try { return JSON.parse(store.get('best')) || {}; } catch (e) { return {}; } })();
+function refreshTitle() {
+  const s = readSave(), b = bests[MN + '.' + MODE];
+  $('bStart').textContent = s ? 'Continue · ' + (s.cp < 0 ? 'the foot' : 'bell ' + (s.cp + 1)) : 'Begin the ascent'; $('bNew').style.display = s ? '' : 'none';
+  $('mnote').textContent = (s ? 'Your ' + MODES[s.mode].name + ' climb is waiting' : MODES[MODE].note) + (b ? ' · Best ' + fmtT(b) : '');
+  $('tsub').textContent = MT.sub; MODES.forEach((m, i) => $('d' + i).classList.toggle('on', i === MODE)); MOUNTAINS.forEach((m, i) => $('m' + i).classList.toggle('on', i === MN));
+}
+let wakeLock = null;
+function wake(on) { try { if (on && !wakeLock && navigator.wakeLock && !document.hidden) navigator.wakeLock.request('screen').then(l => { wakeLock = l; l.addEventListener('release', () => { if (wakeLock === l) wakeLock = null; }); }).catch(() => { }); else if (!on && wakeLock) { wakeLock.release().catch(() => { }); wakeLock = null; } } catch (e) { } }
+function startGame(cont) { audioInit(); audioWake(); goFull(); wake(true); if (G.state !== 'paused') { resetGame(); const s = cont === true ? readSave() : null; if (s) applySave(s); else store.set(SAVE_KEY, null); } G.state = 'play'; show(null); $('hud').classList.add('on'); $('fade').style.opacity = 0; lockPointer(); setTimeout(() => $('hint').style.opacity = 0, 14000); }
 function reachCheckpoint(n) {
   G.cp = n; const t = temples[n]; setLit(n); t.swing = 1; syncHud();
   bellSound(196 * Math.pow(2, [0, 2, 4, 7, 9, 12, 14, 16, 19, 21][n] / 12) / 2, 0.6); bellSound(98, 0.3, 0.02);
   sparks(t.pivot.position.x, t.pivot.position.y - 0.8, t.pivot.position.z, 46);
-  toast(CP_NAMES[n], `Bell ${n + 1} of 10 · ${CP_Y[n]} m`);
+  toast(CP_NAMES[n], `Bell ${n + 1} of 10 · ${CP_Y[n]} m`); saveRun();
 }
 function die() {
   if (G.state !== 'play') return; G.state = 'dying'; G.dieT = 0; G.falls++;
@@ -1490,27 +1557,40 @@ function die() {
   if (BOT) bot.deaths.push({ i: bot.last, y: Math.round(PL.lastGroundY), kind: (botRoute[bot.last + 1] || {}).kind });
 }
 function afterDeath() {
-  if (!BOT) G.lives--; let saved = false; if (G.lives <= 0 && perks.life > 0) { perks.life--; G.lives = 1; saved = true; bellSound(392, 0.3); } syncHud();
-  if (G.lives <= 0) { G.state = 'over'; $('oAlt').textContent = Math.round(G.best) + ' m'; $('oBell').textContent = G.cp + 1; show('over'); $('hud').classList.remove('on'); document.exitPointerLock && document.exitPointerLock(); tone(98, 3.5, 0.3, 'sine', 0, true); tone(65.4, 4, 0.3, 'sine', 0, true); return; }
-  respawn(); G.state = 'play'; $('fade').style.opacity = 0;
-  toast(saved ? 'The Golden Koi saves you' : G.lives === 1 ? 'One life remains' : G.lives + ' lives remain', G.cp < 0 ? 'Back to the foot' : 'Back to ' + CP_NAMES[G.cp], 2600);
+  const ML = MODES[G.mode].lives; if (!BOT && ML) G.lives--; let saved = false; if (G.lives <= 0 && perks.life > 0) { perks.life--; G.lives = 1; saved = true; bellSound(392, 0.3); } syncHud();
+  if (G.lives <= 0) { G.state = 'over'; store.set(SAVE_KEY, null); wake(false); $('oSub').textContent = ML === 1 ? 'The one life is spent' : 'All three lives are spent'; $('oAlt').textContent = Math.round(G.best) + ' m'; $('oBell').textContent = G.cp + 1; show('over'); $('hud').classList.remove('on'); document.exitPointerLock && document.exitPointerLock(); tone(98, 3.5, 0.3, 'sine', 0, true); tone(65.4, 4, 0.3, 'sine', 0, true); return; }
+  respawn(); G.state = 'play'; $('fade').style.opacity = 0; saveRun();
+  toast(saved ? 'The Golden Koi saves you' : !ML ? 'The mountain is patient' : G.lives === 1 ? 'One life remains' : G.lives + ' lives remain', G.cp < 0 ? 'Back to the foot' : 'Back to ' + CP_NAMES[G.cp], 2600);
 }
 function win() {
-  G.state = 'win'; const s = Math.round(G.runTime); $('wTime').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); $('wLives').textContent = G.lives; $('wFalls').textContent = G.falls;
+  G.state = 'win'; const s = Math.round(G.runTime), bk = MN + '.' + G.mode, nb = !NOSAVE && (!bests[bk] || s < bests[bk]); if (nb) { bests[bk] = s; store.set('best', JSON.stringify(bests)); } store.set(SAVE_KEY, null); wake(false);
+  $('wTime').textContent = fmtT(s); $('wBest').textContent = bests[bk] ? (nb ? '★ ' : '') + fmtT(bests[bk]) : '–'; $('wLives').textContent = MODES[G.mode].lives ? G.lives : '∞'; $('wFalls').textContent = G.falls;
   for (let i = 0; i < 6; i++) bellSound([196, 247, 294, 392, 494, 588][i], 0.45, i * 0.45);
   sparks(SUMMIT.wx, H + 9, SUMMIT.wz, 120); setTimeout(() => { show('win'); $('hud').classList.remove('on'); document.exitPointerLock && document.exitPointerLock(); }, SHOT || BOT ? 0 : 3800);
 }
-$('bStart').onclick = startGame; $('bAgain').onclick = startGame; $('bWin').onclick = startGame;
+$('bStart').onclick = () => startGame(true); $('bNew').onclick = $('bAgain').onclick = $('bWin').onclick = () => startGame(false);
+function toTitle() { saveRun(); wake(false); G.state = 'title'; show('title'); $('hud').classList.remove('on'); $('fade').style.opacity = 0; refreshTitle(); }
+$('bQuit').onclick = toTitle;
+MODES.forEach((m, i) => $('d' + i).onclick = () => { MODE = i; store.set('mode', String(i)); refreshTitle(); });
+MOUNTAINS.forEach((m, i) => $('m' + i).onclick = () => { if (i === MN) return; store.set('m', String(i)); $('bStart').textContent = 'Raising the mountain…'; const u = new URL(location.href); u.searchParams.delete('m'); setTimeout(() => location.replace(u.href), 60); });
 $('bResume').onclick = () => { G.state = 'paused'; startGame(); };
 
 // ───────────────────────── input
 const keys = {};
+let last = performance.now();
 let TOUCH = Q.has('touch') ? Q.get('touch') !== '0' : matchMedia('(pointer: coarse)').matches;
 const stick = { id: null, ox: 0, oy: 0, x: 0, y: 0 }, lookT = { id: null, x: 0, y: 0 };
 function setTouch() { TOUCH = true; document.body.classList.add('touch'); applyFov(); }
 function applyFov() { camera.fov = (G.fp ? 74 : 62) * (TOUCH && innerHeight > innerWidth ? 1.28 : 1); camera.updateProjectionMatrix(); }
 addEventListener('resize', applyFov);
-function pauseGame() { if (G.state === 'play') { G.state = 'paused'; show('pause'); stickEnd(); keys.Space = false; $('bJump').classList.remove('dn'); } }
+function pauseGame() { if (G.state === 'play') { G.state = 'paused'; show('pause'); stickEnd(); lookT.id = null; keys.Space = false; $('bJump').classList.remove('dn'); saveRun(); wake(false); } }
+function audioWake() { if (A.ctx && A.ctx.state !== 'running' && !document.hidden) { try { const p = A.ctx.resume(); if (p && p.catch) p.catch(() => { }); } catch (e) { } } }
+const lookBy = (dx, dy) => { if (G.fp) { look.h += dx * 0.0052; look.p = clamp(look.p - dy * 0.0046, -1.45, 1.45); } else { cam.yaw += dx * 0.0056; cam.pitch = clamp(cam.pitch + dy * 0.0046, -1.0, 1.3); } };
+// phones report the new size late after a rotation or when the home-screen app comes back, so measure again shortly after
+let rsT = 0;
+function fitScreen() { resizeAll(); applyFov(); pUni.uScale.value = innerHeight * PRATIO * 0.8; moteUni.uSize.value = innerHeight * PRATIO * 0.11; }
+function queueFit() { fitScreen(); clearTimeout(rsT); rsT = setTimeout(fitScreen, 400); }
+addEventListener('orientationchange', queueFit); addEventListener('pageshow', queueFit); if (window.visualViewport) visualViewport.addEventListener('resize', queueFit);
 function stickEnd() { stick.id = null; stick.x = stick.y = 0; const e = $('stick'); e.classList.remove('on'); e.style.left = e.style.top = ''; e.firstChild.style.transform = ''; }
 {
   const R = 54, opt = { passive: false };
@@ -1531,17 +1611,27 @@ function stickEnd() { stick.id = null; stick.x = stick.y = 0; const e = $('stick
         $('stick').firstChild.style.transform = `translate(${dx}px,${dy}px)`;
       } else if (t.identifier === lookT.id) {
         const dx = t.clientX - lookT.x, dy = t.clientY - lookT.y; lookT.x = t.clientX; lookT.y = t.clientY;
-        if (G.fp) { look.h += dx * 0.0052; look.p = clamp(look.p - dy * 0.0046, -1.45, 1.45); } else { cam.yaw += dx * 0.0056; cam.pitch = clamp(cam.pitch + dy * 0.0046, -1.0, 1.3); }
+        lookBy(dx, dy);
       }
     }
   }, opt);
   const end = e => { for (const t of e.changedTouches) { if (t.identifier === stick.id) stickEnd(); if (t.identifier === lookT.id) lookT.id = null; } };
   canvas.addEventListener('touchend', end); canvas.addEventListener('touchcancel', end);
   const tap = (id, fn, up) => { const el = $(id); el.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); if (!TOUCH) setTouch(); fn(el); }, opt); if (up) { el.addEventListener('touchend', e => { e.preventDefault(); up(el); }, opt); el.addEventListener('touchcancel', () => up(el)); } };
-  tap('bJump', el => { if (G.state !== 'play') return; keys.Space = true; PL.buffer = 0.14; PL.airPress = !PL.grounded && PL.coyote <= 0; el.classList.add('dn'); }, el => { keys.Space = false; el.classList.remove('dn'); });
+  tap('bJump', el => { if (G.state !== 'play') return; keys.Space = true; PL.buffer = 0.14; PL.airPress = !PL.grounded && PL.coyote <= 0; el.classList.add('dn'); }, el => { keys.Space = false; jl.id = null; el.classList.remove('dn'); });
+  // the jump thumb can steer the camera too: drag without lifting
+  const jl = { id: null, x: 0, y: 0 };
+  $('bJump').addEventListener('touchstart', e => { const t = e.changedTouches[0]; jl.id = t.identifier; jl.x = t.clientX; jl.y = t.clientY; }, opt);
+  $('bJump').addEventListener('touchmove', e => { e.preventDefault(); for (const t of e.changedTouches) if (t.identifier === jl.id) { lookBy(t.clientX - jl.x, t.clientY - jl.y); jl.x = t.clientX; jl.y = t.clientY; } }, opt);
   tap('bPause', pauseGame); tap('bView', () => setView(!G.fp)); tap('bMute', () => toggleMute());
   for (const k of ['slow', 'jump', 'undo', 'life']) tap('pk-' + k, () => usePerk(k));
-  document.addEventListener('visibilitychange', () => { if (document.hidden && TOUCH) pauseGame(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { if (TOUCH) pauseGame(); saveRun(); if (A.ctx && TOUCH) { try { A.ctx.suspend(); } catch (e) { } } }
+    else { audioWake(); queueFit(); last = performance.now(); if (G.state === 'play') wake(true); } });
+  addEventListener('pagehide', saveRun);
+  for (const ev of ['touchend', 'mousedown', 'keydown']) addEventListener(ev, audioWake, { passive: true });
+  canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); window.__glLost = true; pauseGame(); });
+  canvas.addEventListener('webglcontextrestored', () => { window.__glLost = false; setTimeout(() => { for (const l of [sun, sunFar]) if (l.shadow.map) { l.shadow.map.dispose(); l.shadow.map = null; } sunFar.shadow.needsUpdate = true; fitScreen(); }, 0); });
   addEventListener('gesturestart', e => e.preventDefault());
   addEventListener('touchstart', () => { if (!TOUCH) setTouch(); }, { passive: true, once: true });
 }
@@ -1553,7 +1643,7 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyM') toggleMute();
   if (e.code === 'KeyV') setView(!G.fp);
   if (e.code === 'KeyG') setQuality((QN + 1) % 3);
-  if (e.code === 'Enter' && G.state !== 'play' && G.state !== 'dying') { if (G.state === 'paused') $('bResume').onclick(); else if (G.state !== 'win' || $('win').classList.contains('on')) startGame(); }
+  if (e.code === 'Enter' && G.state !== 'play' && G.state !== 'dying') { if (G.state === 'paused') $('bResume').onclick(); else if (G.state !== 'win' || $('win').classList.contains('on')) startGame(G.state === 'title'); }
   if (Q.has('debug') && (e.code === 'BracketRight' || e.code === 'BracketLeft')) { G.cp = clamp(G.cp + (e.code === 'BracketRight' ? 1 : -1), -1, 9); setLit(G.cp); syncHud(); respawn(); }
 });
 addEventListener('keyup', e => { keys[e.code] = false; });
@@ -1561,7 +1651,7 @@ addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
 addEventListener('mousemove', e => { if (document.pointerLockElement === canvas || (e.buttons && G.state === 'play')) { if (G.fp) { look.h += e.movementX * 0.0024; look.p = clamp(look.p - e.movementY * 0.0022, -1.45, 1.45); } else { cam.yaw += e.movementX * 0.0026; cam.pitch = clamp(cam.pitch + e.movementY * 0.0022, -1.0, 1.3); } } });
 addEventListener('wheel', e => { cam.dist = clamp(cam.dist + e.deltaY * 0.01, 4.5, 16); }, { passive: true });
 canvas.addEventListener('click', () => { if (G.state === 'play') lockPointer(); });
-document.addEventListener('pointerlockchange', () => { if (!document.pointerLockElement && G.state === 'play' && !SHOT && !BOT) { G.state = 'paused'; show('pause'); } });
+document.addEventListener('pointerlockchange', () => { if (!document.pointerLockElement && G.state === 'play' && !SHOT && !BOT && !TOUCH) { G.state = 'paused'; show('pause'); saveRun(); } });
 function readInput() {
   const mx = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0), mz = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0);
   if (stick.id !== null) return stickInput();
@@ -1576,7 +1666,7 @@ function stickInput() {   // analogue: a gentle push walks, a full push runs
 }
 // ───────────────────────── physics
 // A platform's floor reaches back to the rock: without this the monk could drop into the crack behind it and be squeezed down through the slab.
-for (const pl of plats) { pl.inX = 0; if (pl.br || pl.kind === 'solid') continue; let gap = 0;
+for (const pl of plats) { pl.inX = 0; if (pl.br || pl.kind === 'solid' || pl.kind === 'spin' || pl.kind === 'phase') continue; let gap = 0;
   const tA = pl.thA !== undefined ? Math.min(pl.thA, pl.thB) : pl.th, tB = pl.thA !== undefined ? Math.max(pl.thA, pl.thB) : pl.th, e = pl.hw / pl.rho, yA = pl.y0 !== undefined && pl.y1 !== undefined ? pl.y0 : pl.y, yB = pl.y1 !== undefined ? pl.y1 : pl.y;
   for (let i = 0; i <= 8; i++) for (let k = 0; k <= 4; k++) gap = Math.max(gap, pl.rho - pl.hd - wallR(lerp(tA - e, tB + e, i / 8), Math.min(H, lerp(yA, yB, k / 4) + 0.3)) - PR);
   pl.inX = Math.min(gap, 3) + 0.06; }
@@ -1586,6 +1676,7 @@ function updateDyn(dt) {
     if (m.kind === 'mover') { const u = 0.5 - 0.5 * Math.cos(G.time * m.om + m.ph); m.th = m.thA + (m.thB - m.thA) * u; m.cos = Math.cos(m.th); m.sin = Math.sin(m.th); m.cx = m.rho * m.cos; m.cz = m.rho * m.sin; }
     else if (m.kind === 'lift') { m.y = m.y0 + (m.y1 - m.y0) * (0.5 - 0.5 * Math.cos(G.time * m.om + m.ph)); }
     else if (m.kind === 'drift') { const q = Math.sin(G.time * m.om + m.ph); if (m.axis === 't') m.th = m.th0 + m.amp / m.rho0 * q; else m.rho = m.rho0 + m.amp * q; m.cos = Math.cos(m.th); m.sin = Math.sin(m.th); m.cx = m.rho * m.cos; m.cz = m.rho * m.sin; }
+    else if (m.kind === 'spin') { m.pcos = m.cos; m.psin = m.sin; m.ang = m.th + G.time * m.om + m.ph; m.cos = Math.cos(m.ang); m.sin = Math.sin(m.ang); }
     else if (m.kind === 'phase') { const u = (G.time + m.ph) % PHASE_T; m.gone = u >= PHASE_ON; m.warn = !m.gone && u > PHASE_ON - 0.45; }
     else {
       if (m.trig > 0) { m.trig -= dt; if (m.trig <= 0) { m.falling = true; m.gone = true; m.vy = 0; m.ft = 0; noise(0.5, 300, 0.3); for (let i = 0; i < 10; i++) spawn(m.cx + (Math.random() - .5) * m.hw * 2, m.y - 0.2, m.cz + (Math.random() - .5) * m.hd * 2, (Math.random() - .5) * 2, Math.random() * 2, (Math.random() - .5) * 2, 0.9, 0.3, 0.55, 0.45, 0.4, 0.8, 12, 0.5); } }
@@ -1594,17 +1685,25 @@ function updateDyn(dt) {
     m.dx = m.cx - ox; m.dy = m.y - oy; m.dz = m.cz - oz;
   }
 }
+// gusts: a tangential wind that comes in pulses above each mountain's wind line. It only moves you while you are in the air.
+const WIND = { T: 9.5, on: 2.6, warn: 1.3 };
+function windAt(time, y) {
+  const k = sstep(MT.wind, MT.wind + 10, y); if (k <= 0) return 0;
+  const s = time % WIND.T - (WIND.T - WIND.on); if (s < 0) return 0;
+  return k * ((Math.floor(time / WIND.T) & 1) ? 1 : -1) * Math.min(1, s / 0.35, (WIND.on - s) / 0.35);
+}
 function onLand(pl, vy) {
   monk.sqV = Math.min(6, 1.5 - vy * 0.25); dust(PL.pos.x, PL.pos.y, PL.pos.z, vy < -9 ? 9 : 4, vy < -9 ? 2 : 1.2);
   noise(0.09, 500 + Math.random() * 200, Math.min(0.3, 0.06 - vy * 0.012));
-  if (pl === SUMMIT) PL.safe = { pl, x: PL.pos.x, z: PL.pos.z }; else if (pl.kind !== 'crumble' && pl.kind !== 'phase' && pl.kind !== 'drift') { const dx = PL.pos.x - pl.cx, dz = PL.pos.z - pl.cz, mx = Math.min(0.3, pl.hw * 0.5), mz = Math.min(0.3, pl.hd * 0.5); PL.safe = { pl, lt: clamp(dx * pl.sin - dz * pl.cos, -pl.hw + mx, pl.hw - mx), lr: clamp(dx * pl.cos + dz * pl.sin, -pl.hd + mz, pl.hd - mz) }; }
+  if (pl === SUMMIT) PL.safe = { pl, x: PL.pos.x, z: PL.pos.z }; else if (pl.kind !== 'crumble' && pl.kind !== 'phase' && pl.kind !== 'drift' && pl.kind !== 'spin') { const dx = PL.pos.x - pl.cx, dz = PL.pos.z - pl.cz, mx = Math.min(0.3, pl.hw * 0.5), mz = Math.min(0.3, pl.hd * 0.5); PL.safe = { pl, lt: clamp(dx * pl.sin - dz * pl.cos, -pl.hw + mx, pl.hw - mx), lr: clamp(dx * pl.cos + dz * pl.sin, -pl.hd + mz, pl.hd - mz) }; }
   if (pl.kind === 'temple' && pl.cp > G.cp) reachCheckpoint(pl.cp);
   if (BOT) { const ri = botRoute.indexOf(pl); if (ri >= 0) bot.last = ri; }
 }
 function stepPlayer(dt, ix, iz, jumpHeld) {
   const p = PL.pos, v = PL.vel, g0 = PL.ground;
-  if (g0 && g0.dyn && !g0.gone) { p.x += g0.dx; p.y += g0.dy; p.z += g0.dz; }
-  const hasIn = ix * ix + iz * iz > 1e-4, acc = PL.grounded ? 60 : hasIn ? 28 : 5;
+  if (g0 && g0.dyn && !g0.gone) { p.x += g0.dx; p.y += g0.dy; p.z += g0.dz;
+    if (g0.kind === 'spin') { const dx = p.x - g0.cx, dz = p.z - g0.cz, lt = dx * g0.psin - dz * g0.pcos, lr = dx * g0.pcos + dz * g0.psin; p.x = g0.cx + lt * g0.sin + lr * g0.cos; p.z = g0.cz - lt * g0.cos + lr * g0.sin; } }
+  const hasIn = ix * ix + iz * iz > 1e-4, acc = PL.grounded ? (g0 && g0.ice ? 15 : 60) : hasIn ? 28 : 5;
   let dvx = ix * RUN - v.x, dvz = iz * RUN - v.z; const dl = Math.hypot(dvx, dvz), md = acc * dt; if (dl > md) { dvx *= md / dl; dvz *= md / dl; } v.x += dvx; v.z += dvz;
   PL.buffer -= dt;
   if (PL.buffer > 0 && (PL.grounded || PL.coyote > 0)) { v.y = JUMP_V; PL.grounded = false; PL.ground = null; PL.coyote = 0; PL.buffer = 0; PL.jumping = true; monk.sqV = -3; tone(300, 0.16, 0.07, 'sine', 560); dust(p.x, p.y, p.z, 3, 1); }
@@ -1614,6 +1713,7 @@ function stepPlayer(dt, ix, iz, jumpHeld) {
   v.y = Math.max(-50, v.y - GRAV * dt);
   if (PL.slowT > 0) { PL.slowT -= dt; if (v.y < -2.6) v.y = Math.min(-2.6, v.y + 90 * dt); }
   p.x += v.x * dt; p.y += v.y * dt; p.z += v.z * dt;
+  if (!PL.grounded && p.y > MT.wind) { const w = windAt(G.time, p.y) * MT.windV * dt; if (w) { const r = Math.hypot(p.x, p.z) || 1, tx = -p.z / r, tz = p.x / r; p.x += tx * w; p.z += tz * w; } }
   let landed = null;
   for (let n = 0; n < plats.length; n++) {
     const pl = plats[n]; if (pl.gone || p.y > pl.y + 1 || p.y + PH < pl.y - pl.h - 0.5) continue;
@@ -1678,14 +1778,15 @@ function usePerk(k) {
     if (G.state === 'dying') { G.state = 'play'; G.falls--; $('fade').style.opacity = 0; }
     perkFx('undo', 40); tone(880, 0.5, 0.1, 'sine', 220, true); tone(1320, 0.4, 0.05, 'sine', 330, true);
   }
-  else if (k === 'life') { if (G.state !== 'play' || G.lives >= 5) return; perks.life--; G.lives++; perkFx('life', 40); bellSound(523, 0.3); }
-  toast(PERKS[k].name, 'Perk used', 1300); syncHud();
+  else if (k === 'life') { if (G.state !== 'play' || G.lives >= 5 || !MODES[G.mode].lives) return; perks.life--; G.lives++; perkFx('life', 40); bellSound(523, 0.3); }
+  toast(PERKS[k].name, 'Perk used', 1300); syncHud(); saveRun();
 }
 function captureFish(f) {
-  f.taken = true; f.g.visible = false; perks[f.perk]++; syncHud();
+  const pk = f.perk === 'life' && !MODES[G.mode].lives ? 'jump' : f.perk;   // a pilgrim has no use for lives
+  f.taken = true; f.g.visible = false; perks[pk]++; syncHud(); saveRun();
   const c = new THREE.Color(PERKS[f.perk].col); for (let i = 0; i < 50; i++) { const a = Math.random() * TAU, e = (Math.random() - .5) * 2.4, s = 2 + Math.random() * 4; spawn(f.x, f.y, f.z, Math.cos(a) * Math.cos(e) * s, Math.sin(e) * s + 1, Math.sin(a) * Math.cos(e) * s, 0.8 + Math.random() * 0.7, 0.2, c.r * 3, c.g * 3, c.b * 3, 1, 4, 0); }
   [523, 659, 784, 1047].forEach((n, i) => tone(n, 0.6, 0.09, 'triangle', 0, true, i * 0.07));
-  toast(PERKS[f.perk].fish, '+1 ' + PERKS[f.perk].name, 2600);
+  toast(PERKS[f.perk].fish, '+1 ' + PERKS[pk].name, 2600);
 }
 
 // ───────────────────────── test bot (?bot) — proves every jump on the route is makeable
@@ -1697,18 +1798,23 @@ function botInput() {
   if (!tgt || g === SUMMIT) { tx = SUMMIT.wx; tz = SUMMIT.wz; }
   else {
     tx = tgt.cx; tz = tgt.cz;
+    if (tgt.kind === 'spin') { const ex = p.x - tgt.cx, ez = p.z - tgt.cz, s = (ex * tgt.sin - ez * tgt.cos) < 0 ? -1 : 1, k = s * Math.min(tgt.hw - 0.55, Math.abs(ex * tgt.sin - ez * tgt.cos)); tx += k * tgt.sin; tz -= k * tgt.cos; }
     if (tgt.kind === 'temple' || tgt.kind === 'start') { const dx = p.x - tgt.cx, dz = p.z - tgt.cz, lt = clamp(dx * tgt.sin - dz * tgt.cos, -tgt.hw + 0.8, tgt.hw - 0.8), w = l2w(tgt, lt, 0.9); tx = w.x; tz = w.z; }
     if (g) {
       const rise = tgt.y - p.y, eg = Math.hypot(tgt.cx - g.cx, tgt.cz - g.cz) - (g.br || tgt.br ? Math.min(g.hw, g.hd) + Math.min(tgt.hw, tgt.hd) : g.hw + tgt.hw);
-      go = rise < 1.8 && rise > -9 && eg < RUN * airT(Math.max(rise, 0)) * 0.9 + 0.2;
+      go = rise < 1.8 && rise > -9 && eg < RUN * airT(rise < 0 ? rise * 0.6 : rise) * 0.9 + 0.2;
       if (g.kind === 'lift') go = rise < 0.9 || g.y > g.y1 - 0.25;
       if (tgt.kind === 'lift') go = go && rise > -0.6 && rise < 1.2;
+      if (g.kind === 'spin') { const ex = tgt.cx - g.cx, ez = tgt.cz - g.cz, el = Math.hypot(ex, ez) || 1, a2 = g.ang + g.om * 0.2; go = go && Math.abs(ex * Math.sin(a2) - ez * Math.cos(a2)) / el > 0.93; }
+      if (tgt.kind === 'spin') { const T = airT(Math.max(rise, 0)) * 0.8, a2 = tgt.ang + tgt.om * T, ex = g.cx - tgt.cx, ez = g.cz - tgt.cz, el = Math.hypot(ex, ez) || 1; go = go && Math.abs(ex * Math.sin(a2) - ez * Math.cos(a2)) / el > 0.95; }
+      if (p.y > MT.wind - 1 && g.kind !== 'crumble' && g.kind !== 'phase' && (windAt(G.time, 999) || windAt(G.time + 0.5, 999) || windAt(G.time + airT(Math.max(rise, 0)) + 0.2, 999))) go = false;
       if (tgt.kind === 'phase') { const u = (G.time + tgt.ph + airT(Math.max(rise, 0))) % PHASE_T; go = go && u > 0.1 && u < PHASE_ON - 0.75; }
       if (g.kind === 'phase' && g.warn) go = go || eg < RUN * airT(Math.max(rise, 0)) * 0.98;
     }
   }
   const dx = tx - p.x, dz = tz - p.z, d = Math.hypot(dx, dz) || 1, ux = dx / d, uz = dz / d;
   if (PL.grounded && g) {
+    if (g.kind === 'temple' && (p.x - g.cx) * g.cos + (p.z - g.cz) * g.sin < 0.3) return { x: g.cos, z: g.sin, jump: false };   // step out from between the columns first
     if (!go) { const ex = tx - g.cx, ez = tz - g.cz, sw = l2w(g, clamp(ex * g.sin - ez * g.cos, -g.hw + 0.45, g.hw - 0.45), clamp(ex * g.cos + ez * g.sin, -g.hd + 0.45, g.hd - 0.45)), gx = sw.x - p.x, gz = sw.z - p.z, gd = Math.hypot(gx, gz); return gd > 0.25 ? { x: gx / gd * 0.6, z: gz / gd * 0.6, jump: false } : { x: 0, z: 0, jump: false }; }
     if (g !== SUMMIT) { const nx = p.x + ux * 0.3 - g.cx, nz = p.z + uz * 0.3 - g.cz; if (Math.abs(nx * g.sin - nz * g.cos) > g.hw || Math.abs(nx * g.cos + nz * g.sin) > g.hd) PL.buffer = 0.1; }
     return { x: ux, z: uz, jump: true };
@@ -1774,13 +1880,13 @@ function updateCamera(dt) {
   cam.cur = dist < cam.cur ? dist : damp(cam.cur, dist, 4, dt);
   camera.position.set(T.x + dx * cam.cur, T.y + dy * cam.cur, T.z + dz * cam.cur); camera.lookAt(T.x, T.y + 0.35, T.z);
 }
-let hudAlt = -1;
+let hudAlt = -1, windSt = 0, windTold = false;
 function updateWorld(dt) {
   flagSim.update(dt);
   uTime.value = G.time; for (const c of cloudLayers) c.material.uniforms.uTime.value = G.time;
   puffs.rotation.y += dt * 0.004;
   for (const m of dyn) {
-    m.mesh.position.set(m.cx, m.y, m.cz); m.mesh.rotation.y = Math.PI / 2 - m.th; m.mesh.visible = m.kind === 'phase' ? !m.gone && !(m.warn && (G.time * 14 & 1)) : !(m.kind === 'crumble' && m.falling && m.ft > 2.6);
+    m.mesh.position.set(m.cx, m.y, m.cz); m.mesh.rotation.y = Math.PI / 2 - (m.ang ?? m.th); m.mesh.visible = m.kind === 'phase' ? !m.gone && !(m.warn && (G.time * 14 & 1)) : !(m.kind === 'crumble' && m.falling && m.ft > 2.6);
     if (m.kind === 'crumble' && m.trig > 0) { m.mesh.position.x += (Math.random() - .5) * 0.06; m.mesh.position.y += (Math.random() - .5) * 0.05; m.mesh.rotation.z = (Math.random() - .5) * 0.03; } else if (m.kind === 'crumble') m.mesh.rotation.z = m.falling ? m.ft * 0.5 : 0;
     if (m.ropes) m.ropes.scale.y = m.y1 + 3.0 - m.y;
   }
@@ -1794,7 +1900,12 @@ function updateWorld(dt) {
   for (const b of birds) { const a = b.ph + G.time * b.sp; b.g.position.set(Math.cos(a) * b.rad, b.y + Math.sin(a * 3) * 6, Math.sin(a) * b.rad); b.g.rotation.y = -a + (b.sp > 0 ? Math.PI : 0); const fl = Math.sin(G.time * 7 + b.ph) * 0.6; b.l.rotation.z = fl; b.r.rotation.z = -fl; }
   const alt = PL.pos.y, snow = sstep(150, 215, alt);
   moteUni.uCam.value.copy(camera.position); moteUni.uCol.value.setRGB(lerp(1.0, 1.0, snow), lerp(0.72, 1.0, snow), lerp(0.78, 1.0, snow));
-  if (A.ctx) { const t = clamp(alt / H, 0, 1); A.windG.gain.value = 0.03 + t * 0.09 + (PL.vel.y < -12 ? 0.12 : 0); A.windF.frequency.value = 320 + t * 500; }
+  const playing = G.state === 'play' || G.state === 'dying', gust = playing ? windAt(G.time, alt) : 0, ws = G.time % WIND.T - (WIND.T - WIND.on), wst = !playing || alt < MT.wind + 2 ? 0 : ws >= 0 ? 2 : ws > -WIND.warn ? 1 : 0;
+  if (wst !== windSt) { windSt = wst; $('wind').className = ['', 'warn', 'on'][wst];
+    if (wst === 1) { noise(1.5, 520, 0.09, 'bandpass', 2); if (!windTold) { windTold = true; toast('The wind is rising', 'Wait for the lull before you leap', 3600); } } }
+  if (gust) { const p = PL.pos, r = Math.hypot(p.x, p.z) || 1, tx = -p.z / r * gust, tz = p.x / r * gust;
+    for (let i = 0; i < 2; i++) spawn(p.x + (Math.random() - .5) * 12 - tx * 4, p.y + Math.random() * 5 - 1, p.z + (Math.random() - .5) * 12 - tz * 4, tx * 17, (Math.random() - .5), tz * 17, 0.5, 0.09, 1, 1, 1, 0.45, 0, 0); }
+  if (A.ctx) { const t = clamp(alt / H, 0, 1); A.windG.gain.value = 0.03 + t * 0.09 + (PL.vel.y < -12 ? 0.12 : 0) + Math.abs(gust) * 0.22; A.windF.frequency.value = 320 + t * 500 + Math.abs(gust) * 260; }
   sky.position.copy(camera.position);
   _o.copy(G.state === 'title' ? _o.set(0, 150, 0) : PL.pos); sun.target.position.copy(_o); sun.position.copy(_o).addScaledVector(SUN_DIR, 240);
   const ai = Math.max(0, Math.round(alt)); if (ai !== hudAlt) { hudAlt = ai; $('altn').textContent = ai; const pc = clamp(alt / H, 0, 1) * 100 + '%'; $('mfill').style.height = pc; $('mme').style.bottom = pc; }
@@ -1805,11 +1916,11 @@ function updateWorld(dt) {
 if (Q.has('qo')) for (const kv of Q.get('qo').split(',')) { const [k, v] = kv.split(':'); for (const o of QUAL) o[k] = parseFloat(v); }
 if (TOUCH) setTouch();
 if (TOUCH && !STANDALONE) { const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform)); const el = $('a2hs'); el.textContent = ios ? 'For full screen: Share → Add to Home Screen' : 'For full screen: browser menu → Install app'; el.style.display = 'block'; }
-if ('serviceWorker' in navigator && location.protocol === 'https:') { navigator.serviceWorker.register('sw.js').catch(() => { });
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) { navigator.serviceWorker.register('sw.js').catch(() => { });
   // first visit: the three.js modules loaded before the worker took control, so store them for offline play now
-  caches.open('cloudspire-v1').then(c => { for (const e of performance.getEntriesByType('resource')) if (e.name.includes('cdn.jsdelivr.net')) c.match(e.name).then(m => m || c.add(e.name)).catch(() => { }); }).catch(() => { }); }
+  if (window.caches) caches.open('cloudspire-v2').then(c => { for (const e of performance.getEntriesByType('resource')) if (e.name.includes('cdn.jsdelivr.net')) c.match(e.name).then(m => m || c.add(e.name)).catch(() => { }); }).catch(() => { }); }
 { let q = TOUCH ? '0' : '1'; try { q = localStorage.getItem('cloudspire.q') || q; } catch (e) { } setQuality(Q.has('q') ? parseInt(Q.get('q')) : parseInt(q), true); }
-respawn(); syncHud(); $('loading').remove();
+respawn(); syncHud(); refreshTitle(); $('loading').remove();
 if (Q.has('y') || SHOT) {
   startGame(); const ty = parseFloat(Q.get('y') || '0');
   if (ty > 0) { G.cp = CP_Y.filter(c => c <= ty).length - 1; setLit(G.cp); syncHud(); let b = route[0]; for (const r of route) if (Math.abs(r.y - ty) < Math.abs(b.y - ty) && r.kind !== 'drum') b = r;
@@ -1844,15 +1955,18 @@ if (Q.has('pre')) { if (G.state !== 'play') startGame(); let mx = 0, bad = 0; co
   for (let i = 0; i < n; i++) { simStep(STEP); simStep(STEP); updateMonk(1 / 60); updateCamera(1 / 60); flagSim.update(1 / 60);
     for (let k = 0; k < sp.count; k++) { const d = Math.hypot(sp.getX(k) - PL.pos.x, sp.getY(k) - PL.pos.y - 0.45, sp.getZ(k) - PL.pos.z); if (!(d < 1e9)) bad++; else if (d > mx) mx = d; } }
   preStat = { mx: +mx.toFixed(3), bad, vy: +PL.vel.y.toFixed(2) }; }
-let last = performance.now(), acc = 0;
+let acc = 0, perfN = 0, perfT = 0;
 function tick(now) {
   requestAnimationFrame(tick); const now0 = performance.now();
-  const dt = clamp((now - last) / 1000, 0, 0.05); last = now;
+  const raw = (now - last) / 1000, dt = clamp(raw, 0, 0.05); last = now;
+  if (G.state === 'play' && !SHOT && !BOT && raw < 0.25) {    // a phone that cannot hold the frame rate trades sharpness for it
+    perfT += raw; if (++perfN >= 150) { const avg = perfT / perfN; perfN = perfT = 0;
+      if (avg > 0.027 && RS > 0.5) { RS = Math.max(0.5, RS * 0.84); if (RS < 0.72 && rtScene.samples) { rtScene.samples = 0; rtScene.dispose(); } PRATIO = Math.min(devicePixelRatio || 1, QQ.pr) * RS; fitScreen(); } } }
   if (G.state === 'title' || G.state === 'over') { G.time += dt; updateDyn(dt); }
   else if (G.state !== 'paused') { acc += dt; while (acc >= STEP) { simStep(STEP); acc -= STEP; } }
   if (G.state !== 'paused') { updateMonk(dt); updateParticles(dt); updateWorld(dt); }
   updateCamera(dt);
-  renderFrame();
+  if (!window.__glLost) renderFrame();
   if (window.__ft) { const g = renderer.getContext(); g.finish(); window.__ft.push(performance.now() - now0); }
 }
 requestAnimationFrame(tick);
