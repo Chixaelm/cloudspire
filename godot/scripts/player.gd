@@ -1,10 +1,10 @@
 class_name Player
 extends CharacterBody3D
-## First-person monk. Everything is in metres and seconds, and gravity is real (9.81).
+## First-person monk. Everything is in metres and seconds, and gravity is 16 (heavier than real, so jumps feel snappy).
 ##
 ## The one deliberate cheat is the second jump. Everything else follows momentum:
 ##  - running builds pace gradually, and stopping takes friction;
-##  - in the air there is almost no steering;
+##  - in the air you can steer a little, but not fly;
 ##  - a slide is a short shove followed by friction, unless a slope keeps feeding it;
 ##  - a wall only carries you while you are fast enough for your feet to grip, and the grip fades;
 ##  - hit an angled surface at speed and crouch on impact, and you ricochet off it instead of sticking.
@@ -22,22 +22,22 @@ signal move_event(what: String)
 @export_group("Run")
 @export var jog_speed := 5.5                 ## pace you reach almost at once
 @export var sprint_speed := 8.5              ## pace you build up to by not stopping
-@export var ground_accel := 24.0
+@export var ground_accel := 200.0
 @export var pace_gain := 1.5                 ## m/s gained per second of sustained running
 @export var pace_loss := 7.0
-@export var ground_friction := 18.0          ## braking with no input
-@export var overspeed_drag := 2.5            ## how fast speed above your pace bleeds off on foot
+@export var ground_friction := 100.0          ## braking with no input
+@export var overspeed_drag := 4.0            ## how fast speed above your pace bleeds off on foot
 @export var crouch_speed := 2.2
 @export var slope_pull := 0.35               ## share of gravity felt along a slope while running
 
 @export_group("Air")
-@export var gravity := 9.81
-@export var jump_speed := 4.5                ## about a 1 m standing jump
-@export var hop_speed := 2.6                 ## let go of jump early and the rise is trimmed to this: a short hop
-@export var double_jump_speed := 4.2
+@export var gravity := 16.0
+@export var jump_speed := 5.75                ## about a 1 m standing jump
+@export var hop_speed := 3.32                 ## let go of jump early and the rise is trimmed to this: a short hop
+@export var double_jump_speed := 5.36
 @export var double_jump_steer := 1.5         ## sideways shove the second jump may add
-@export var air_accel := 5.0
-@export var air_wish_speed := 1.2            ## air steering can only add this much speed in a new direction
+@export var air_accel := 25.0
+@export var air_wish_speed := 5.0            ## air steering can only add this much speed in a new direction
 @export var coyote_time := 0.1
 @export var jump_buffer := 0.12
 
@@ -46,7 +46,7 @@ signal move_event(what: String)
 @export var slide_boost := 1.3               ## the push from dropping into a slide
 @export var slide_boost_cap := 10.0          ## the push never takes you past this
 @export var slide_boost_cooldown := 1.0
-@export var slide_friction := 0.36           ## friction coefficient: on the flat you lose ~3.5 m/s every second
+@export var slide_friction := 0.36           ## friction coefficient: on the flat you lose ~5.8 m/s every second
 @export var slide_steer := 1.2
 @export var slide_stop_speed := 1.5
 

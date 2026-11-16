@@ -23,14 +23,14 @@ Click the window to capture the mouse. A controller works as soon as it is conne
 
 ## The physics
 
-Units are metres and seconds, gravity is 9.81, and the body is 1.8 m tall. The second jump is the only cheat.
+Units are metres and seconds, gravity is 16 (heavier than real so jumps feel snappy), and the body is 1.8 m tall. The second jump is the only cheat.
 
 - **Pace**: you reach a 5.5 m/s jog almost at once and build to an 8.5 m/s sprint over about two seconds of
-  not stopping. Stopping from a sprint takes about half a second.
-- **Jumping**: a held jump rises about 1 m; a jog carries it 5.5 m. There is almost no steering in the air,
-  though pulling back does brake you a little.
+  not stopping. Stopping from a sprint takes under a tenth of a second, and turning round is about as quick.
+- **Jumping**: a held jump rises about 1 m; a jog carries it about 4.4 m. You can steer firmly in the air (up to 5 m/s in a new direction),
+  and pulling back brakes you.
 - **Slide**: crouch while running. You get a shove of about 1.3 m/s, then friction (coefficient 0.36) takes
-  roughly 3.5 m/s off every second. On a slope steeper than about 20° gravity wins and the slide speeds up.
+  roughly 5.8 m/s off every second. On a slope steeper than about 20° gravity wins and the slide speeds up.
 - **Wall run**: jump into a wall at a shallow angle while sprinting. Your feet carry at most 85% of your weight,
   less the slower you go, and the grip fades to nothing over 1.6 s. Jump to kick off.
 - **Ricochet**: hit a surface angled between 12° and 80° at speed and press crouch within 0.14 s of the impact,
