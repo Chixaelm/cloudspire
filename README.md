@@ -51,3 +51,7 @@ A second game in `edge.html` built on the same engine: the mountain is half as b
 The route is assembled from set pieces — boardwalks, slide lintels, mural walls, double-jump leaps, tall masonry steps, dash-length chasms, strings of crumbling slabs — mixed with the movers, lifts, drums, turning beams, lotus leaves, ice and wind of the original. Paths differ here: *Pilgrim* returns you to your last firm footing, *Monk* to the last bell, *Ascetic* has three lives.
 
 `edge.html?bot&fast&m=0..2` runs the verification bot, which uses the full move set.
+
+## Godot version (in progress)
+
+`godot/` holds a first-person rebuild for Godot 4 with physically grounded movement: one mock-up level to judge the feel. See `godot/README.md`.
